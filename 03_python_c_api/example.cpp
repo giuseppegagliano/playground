@@ -13,6 +13,7 @@ void pyobj_print(PyObject *o);
 PyObject *compute_lcs(PyObject *self, PyObject* args);
 PyObject *test_func(PyObject *self, PyObject* args);
 PyObject *parse_input_func(PyObject *self, PyObject* args);
+PyObject *return_obj_func(PyObject *self, PyObject* args);
 PyMODINIT_FUNC PyInit_glcr();
 
 int import_numpy(){
@@ -29,6 +30,7 @@ static PyMethodDef cpython_module_methods[] = {
 //				"  -  verbosity:	0 for nothing stored, 1 store GSA and MAT, 2 store GSA and extended MAT"},
 				{ "test", (PyCFunction)test_func, METH_NOARGS, "A first no args test function"},
 				{ "parse_input_func", (PyCFunction)parse_input_func, METH_VARARGS, "A function with arguments"},
+				{ "return_object_func", (PyCFunction)return_obj_func, METH_VARARGS, "A function that returns a dict"},
 				{ NULL, NULL, 0, NULL }
 };
 
@@ -78,6 +80,28 @@ PyObject *parse_input_func(PyObject *self, PyObject* args){
 	return Py_BuildValue("s", "It, works! Check the jupyter log...");
 }
 
+
+PyObject *return_obj_func(PyObject *self, PyObject* args){
+	PyObject *aList, *aTuple;
+
+	// If the size is known
+	int size = 10;
+	aList = PyList_New(size);
+	for (int j=0; j<size; j++)
+		PyList_SetItem(aList, j, Py_BuildValue("i", j));
+	// If size is unknown
+	aList = PyList_New(0);
+	PyList_Append(aList, Py_BuildValue("i", 4));
+
+
+	aTuple = PyTuple_New(3);
+	PyTuple_SET_ITEM(aTuple, (Py_ssize_t)0, Py_BuildValue("i", 0));
+	PyTuple_SET_ITEM(aTuple, (Py_ssize_t)1, Py_BuildValue("i", 1));
+	PyTuple_SET_ITEM(aTuple, (Py_ssize_t)2, Py_BuildValue("i", 2));
+
+
+	return Py_BuildValue("{sOsOss}", "aList", aList, "aTuple", aTuple, "aString", "and so on...");
+}
 
 
 //PyObject *compute_lcs(PyObject *self, PyObject* args) {
